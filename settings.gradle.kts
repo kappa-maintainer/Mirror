@@ -4,13 +4,13 @@ pluginManagement {
         gradlePluginPortal()
         maven {
             name = "forge"
-            setUrl("http://files.minecraftforge.net/maven")
+            setUrl("https://maven.minecraftforge.net/")
         }
     }
     resolutionStrategy {
         eachPlugin {
             if(requested.id.namespace == "net.minecraftforge.gradle") {
-                useModule("net.minecraftforge.gradle:ForgeGradle:${requested.version}")
+                useModule("com.anatawa12.forge:ForgeGradle:${requested.version}")
             }
         }
     }

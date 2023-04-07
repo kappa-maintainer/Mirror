@@ -13,8 +13,8 @@ plugins {
     idea
     maven
     signing
-    id("com.github.johnrengelman.shadow").version("2.0.4")
-    id("net.minecraftforge.gradle.forge").version("2.3-SNAPSHOT")
+    id("com.github.johnrengelman.shadow").version("4.0.4")
+    id("net.minecraftforge.gradle.forge").version("2.3-1.0.7")
 }
 
 val scaladoc: ScalaDoc by tasks
@@ -60,7 +60,7 @@ minecraft {
 }
 
 dependencies {
-    compile("com.chuusai:shapeless_2.11:2.3.3") {
+    compile("com.chuusai:shapeless_2.11:2.3.10") {
         exclude(group = "org.scala-lang")
     }
     compile("org.scala-lang:scala-library:2.11.4") //Gets ourself a better compiler
@@ -73,7 +73,7 @@ dependencies {
 shadowJar.apply {
     classifier = "shaded"
     dependencies {
-        include(dependency("com.chuusai:shapeless_2.11:2.3.3"))
+        include(dependency("com.chuusai:shapeless_2.11:2.3.10"))
         exclude(dependency("org.scala-lang:scala-library:2.11.1"))
         exclude(dependency("org.scala-lang:scala-library:2.11.4"))
     }
@@ -135,66 +135,5 @@ artifacts {
     add("archives", deobfJar)
 }
 
-signing {
-    useGpgCmd()
-    sign(configurations.archives)
-}
 
-tasks {
-    "uploadArchives"(Upload::class) {
-        repositories {
-            withConvention(MavenRepositoryHandlerConvention::class) {
-                mavenDeployer {
-                    beforeDeployment {
-                        signing.signPom(this)
-                    }
 
-                    withGroovyBuilder {
-                        val releasesUri = """https://api.bintray.com/maven/team-nightclipse/maven/Mirror/;publish=1"""
-                        "repository"("url" to uri(releasesUri)) {
-                            "authentication"("userName" to properties["bintray.user"], "password" to properties["bintray.apikey"])
-                        }
-                        /*
-                        "snapshotRepository"("url" to uri("TODO")) {
-                            "authentication"("userName" to properties["bintray.user"], "password" to properties["bintray.apikey"])
-                        }
-                        */
-                    }
-
-                    pom.project {
-                        withGroovyBuilder {
-                            "description"("A Minecraft rendering library")
-
-                            "licenses" {
-                                "license" {
-                                    "name"("MIT")
-                                    "url"("http://opensource.org/licenses/MIT")
-                                    "distribution"("repo")
-                                }
-                            }
-
-                            "scm" {
-                                "url"("https://github.com/TeamNightclipse/Mirror")
-                                "connection"("scm:git:github.com/TeamNightclipse/Mirror")
-                                "developerConnection"("scm:git:github.com/TeamNightclipse/Mirror")
-                            }
-
-                            "issueManagement" {
-                                "system"("github")
-                                "url"("https://github.com/TeamNightclipse/Mirror/issues")
-                            }
-
-                            "developers" {
-                                "developer" {
-                                    "id"("Nikolai Frid")
-                                    "email"("katrix97@hotmail.com")
-                                    "url"("http://katsstuff.net/")
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
